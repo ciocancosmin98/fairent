@@ -22,5 +22,5 @@ for i in tqdm(range(450)):
         apartmentURLs.append(item.contents[1].attrs['href'])
 
 jsonData = json.dumps(apartmentURLs)
-with open('apartmentURLs.json', 'w') as file:
+with open('../data/urls.json', 'w') as file:
     file.write(jsonData)

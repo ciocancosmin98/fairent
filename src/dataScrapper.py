@@ -6,7 +6,7 @@ from tqdm import tqdm
 from copy import deepcopy
 import threading
 
-with open('apartmentURLs.json', 'r') as file:
+with open('../data/urls.json', 'r') as file:
     apartmentURLs = json.load(file)
 
 def split_tasks(tasks: List, n: int):
@@ -46,7 +46,7 @@ def gather_all(urls, n_threads = 4):
             threads[i].join()
 
     jsonData = json.dumps(apartments, indent=4, separators=(',', ': '), sort_keys=True)
-    with open('apartmentData.json'.format(id), 'w') as file:
+    with open('../data/dataset.json'.format(id), 'w') as file:
         file.write(jsonData)
 
 def gather_thread(apartments, apartmentURLs, pbar):
