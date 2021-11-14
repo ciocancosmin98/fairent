@@ -1,11 +1,14 @@
 from flask import Flask, request
+from flask_cors import CORS
 import tensorflow as tf
 from training import custom_loss
 from preprocessor import preprocess, getBaseDf, reverseNormPrice, getFeatures, keys
 import pandas as pd
 import numpy as np
+import json
 
 app = Flask(__name__)
+CORS(app)
 
 model = tf.keras.models.load_model('../data/model.h5', custom_objects={'custom_loss': custom_loss})
 # Check its architecture
@@ -45,6 +48,10 @@ def preprocess_json(req_data):
 
     return df
 
+class Prediction:
+    min_price = '0.0'
+    max_price = '0.0'
+
 @app.route('/predict', methods=['POST'])
 def index():
     request_data = request.get_json()
@@ -77,11 +84,11 @@ def index():
     min_price = predictions.min()
     max_price = predictions.max()
 
-    return f'\
-    {{\n\
-        "min_price": "{min_price}"\n\
-        "max_price": "{max_price}"\n\
-    }}'
+    prediction = Prediction()
+    prediction.min_price = f"{min_price:.1f}"
+    prediction.max_price = f"{max_price:.1f}"
+
+    return json.dumps(prediction.__dict__)
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
