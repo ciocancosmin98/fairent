@@ -20,7 +20,7 @@ def custom_loss(y_true, y_interval):
 
     for i in range(bs):
         if y_true[i] > _max[i]:
-            f2 += (y_true[i][0] - _min[i]) ** 2
+            f2 += (y_true[i][0] - _max[i]) ** 2
 
     f12 = tf.add(f1, f2)
 
@@ -33,14 +33,6 @@ def train_model() -> tf.keras.Model:
     df = getBaseDf()
     df = preprocess(df)
 
-    """
-    features = pd.get_dummies(df)
-
-    labels = np.array(features['price'])  
-    features = features.drop('price', axis=1)
-    feature_list = list(features.columns)
-    features = np.array(features)
-    """
     labels, features = getFeatures(df)
 
     train_features, test_features, train_labels, test_labels = \
@@ -52,13 +44,13 @@ def train_model() -> tf.keras.Model:
     print('Testing Labels Shape:', test_labels.shape)
 
     model = tf.keras.models.Sequential([
-        tf.keras.layers.Dense(64, activation='relu'),
+        tf.keras.layers.Dense(32, activation='relu'),
         tf.keras.layers.Dense(2)
     ])
 
     model.compile(optimizer='adam', loss=custom_loss)
 
-    model.fit(train_features, train_labels, epochs=1, batch_size=64)
+    model.fit(train_features, train_labels, epochs=1, batch_size=32)
 
     model.evaluate(test_features,  test_labels, verbose=2, batch_size=1)
 
